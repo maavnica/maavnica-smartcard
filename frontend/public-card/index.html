@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Maavnica SmartCard – Carte pro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --primary: #2563EB;
+      --primary-soft: #1D4ED8;
+      --bg: #0B1120;
+      --card-bg: #020617;
+      --text-main: #F9FAFB;
+      --text-soft: #9CA3AF;
+      --border-subtle: #1F2933;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #1E293B 0, #020617 52%);
+      color: var(--text-main);
+      min-height: 100vh;
+    }
+
+    .page {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 16px 12px 32px;
+    }
+
+    .top-brand {
+      text-align: center;
+      font-size: 11px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: #64748B;
+      margin-bottom: 10px;
+    }
+
+    .card-wrapper {
+      background: #020617;
+      border-radius: 26px;
+      box-shadow: 0 24px 60px rgba(15,23,42,0.88);
+      overflow: hidden;
+      border: 1px solid #1E293B;
+    }
+
+    .hero {
+      padding: 18px 18px 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 0 0, rgba(255,255,255,0.15), transparent 55%),
+                  radial-gradient(circle at 100% 0, rgba(148,163,184,0.25), transparent 60%),
+                  linear-gradient(135deg, var(--primary-soft), #0B1120);
+      opacity: .96;
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.45);
+      border: 1px solid rgba(148,163,184,0.4);
+      font-size: 11px;
+      color: #E5E7EB;
+    }
+
+    .badge span:first-child {
+      font-size: 13px;
+    }
+
+    .hero-title {
+      font-size: 22px;
+      font-weight: 800;
+      margin: 2px 0 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hero-emoji {
+      font-size: 22px;
+    }
+
+    .hero-subtitle {
+      font-size: 12px;
+      color: #E5E7EB;
+      opacity: .9;
+    }
+
+    .hero-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+      font-size: 11px;
+      color: #E5E7EB;
+      opacity: .92;
+    }
+
+    .hero-footer span {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .hero-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #22C55E;
+      box-shadow: 0 0 0 4px rgba(34,197,94,.28);
+    }
+
+    .hero-brand {
+      opacity: .8;
+    }
+
+    .content {
+      padding: 14px 14px 18px;
+    }
+
+    .primary-btn {
+      width: 100%;
+      padding: 11px 14px;
+      border-radius: 999px;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      color: #F9FAFB;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--primary), var(--primary-soft));
+      box-shadow: 0 16px 40px rgba(37,99,235,0.45);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .primary-btn:disabled {
+      opacity: .45;
+      cursor: default;
+      box-shadow: none;
+    }
+
+    .btn-icon {
+      font-size: 15px;
+    }
+
+    .actions-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    @media (min-width: 420px) {
+      .actions-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    .secondary-btn {
+      width: 100%;
+      padding: 9px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.45);
+      background: rgba(15,23,42,0.9);
+      color: #E5E7EB;
+      font-size: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .secondary-btn:disabled {
+      opacity: .35;
+      cursor: default;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      margin: 12px 0 6px;
+      color: #E5E7EB;
+    }
+
+    .section-sub {
+      font-size: 11px;
+      color: var(--text-soft);
+      margin-bottom: 8px;
+    }
+
+    .pill-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .pill-select {
+      flex: 1;
+      padding: 8px 8px;
+      border-radius: 999px;
+      border: 1px solid #1F2937;
+      background: #020617;
+      color: #E5E7EB;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .pill-select.active-yes {
+      background: rgba(22,163,74,0.18);
+      border-color: #22C55E;
+      color: #BBF7D0;
+    }
+    .pill-select.active-no {
+      background: rgba(239,68,68,0.16);
+      border-color: #F97373;
+      color: #FECACA;
+    }
+
+    textarea, input {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid #111827;
+      background: #020617;
+      color: #F9FAFB;
+      font-size: 12px;
+      padding: 8px 9px;
+      box-sizing: border-box;
+      font-family: inherit;
+    }
+
+    textarea::placeholder, input::placeholder {
+      color: #6B7280;
+      font-size: 11px;
+    }
+
+    textarea {
+      min-height: 66px;
+      resize: vertical;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1.1fr 1.1fr;
+      gap: 8px;
+    }
+
+    @media (max-width: 420px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .submit-btn {
+      width: 100%;
+      margin-top: 8px;
+      padding: 9px 12px;
+      border-radius: 999px;
+      border: none;
+      background: #1F2937;
+      color: #E5E7EB;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .submit-btn:disabled {
+      opacity: .4;
+      cursor: default;
+    }
+
+    .hint {
+      font-size: 10px;
+      color: #6B7280;
+      margin-top: 4px;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid #111827;
+      margin: 12px 0;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      background: #22C55E;
+      color: #052E16;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 500;
+      box-shadow: 0 12px 30px rgba(22,163,74,0.5);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease-out, transform .2s ease-out;
+    }
+
+    .toast.error {
+      background: #F97373;
+      color: #450A0A;
+      box-shadow: 0 12px 30px rgba(248,113,113,0.5);
+    }
+
+    .toast.show {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate(-50%, -4px);
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 8px;
+      font-size: 10px;
+      color: #4B5563;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="top-brand">MAAVNICA SMARTCARD</div>
+
+    <div class="card-wrapper">
+      <!-- HEADER -->
+      <div class="hero">
+        <div class="hero-bg" id="hero-bg"></div>
+        <div class="hero-inner">
+          <div class="badge-row">
+            <div class="badge">
+              <span>⭐</span><span>Entreprise recommandée</span>
+            </div>
+            <div class="badge">
+              <span>📍</span><span>Service de proximité</span>
+            </div>
+          </div>
+          <div class="hero-title">
+            <span class="hero-emoji" id="hero-emoji">🛠️</span>
+            <span id="company-name">Votre entreprise</span>
+          </div>
+          <div class="hero-subtitle" id="hero-subtitle">
+            Votre carte pro intelligente Maavnica&nbsp;: avis, devis et contacts en un seul endroit.
+          </div>
+          <div class="hero-footer">
+            <span><span class="hero-dot"></span>Disponible pour vos clients</span>
+            <span class="hero-brand">via Maavnica SmartCard</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONTENU -->
+      <div class="content">
+        <!-- BOUTON PRINCIPAL AVIS GOOGLE -->
+        <button class="primary-btn" id="btn-google" disabled>
+          <span class="btn-icon">⭐</span>
+          <span>Laisser un avis Google</span>
+        </button>
+
+        <!-- BOUTONS CONTACT / PAIEMENT -->
+        <div class="actions-grid">
+          <button class="secondary-btn" id="btn-whatsapp" disabled>
+            <span>💬</span><span>WhatsApp</span>
+          </button>
+          <button class="secondary-btn" id="btn-call" disabled>
+            <span>📞</span><span>Appeler</span>
+          </button>
+          <button class="secondary-btn" id="btn-pay" disabled>
+            <span>💳</span><span>Payer en ligne</span>
+          </button>
+        </div>
+
+        <!-- SECTION AVIS -->
+        <div class="section-title">Votre avis rapide</div>
+        <div class="section-sub">
+          En quelques secondes, dites si vous êtes satisfait de l’intervention, et laissez un mot si vous le souhaitez.
+        </div>
+
+        <div class="pill-row">
+          <button type="button" class="pill-select" id="pill-yes">
+            <span>🙂</span><span>Satisfait</span>
+          </button>
+          <button type="button" class="pill-select" id="pill-no">
+            <span>🙁</span><span>Pas satisfait</span>
+          </button>
+        </div>
+
+        <textarea id="feedback-comment" placeholder="Un mot sur votre expérience (optionnel)"></textarea>
+        <button class="submit-btn" id="btn-send-feedback" disabled>Envoyer mon retour</button>
+        <div class="hint">
+          Votre retour aide l’entreprise à améliorer ses services et à être mieux référencée.
+        </div>
+
+        <hr class="divider" />
+
+        <!-- SECTION DEVIS -->
+        <div class="section-title">Demander un devis</div>
+        <div class="section-sub">
+          Expliquez votre besoin, l’entreprise vous recontactera rapidement pour une estimation.
+        </div>
+
+        <div class="form-row">
+          <input id="quote-name" placeholder="Votre nom *" />
+          <input id="quote-phone" placeholder="Téléphone *" />
+        </div>
+        <div style="margin-top:8px;">
+          <input id="quote-email" placeholder="Email (facultatif)" />
+        </div>
+        <div style="margin-top:8px;">
+          <textarea id="quote-message" placeholder="Votre demande (type d’intervention, lieu, disponibilités…) *"></textarea>
+        </div>
+        <button class="submit-btn" id="btn-send-quote">Envoyer ma demande de devis</button>
+        <div class="hint">
+          Vous ne serez contacté que par cet artisan, vos informations ne sont pas revendues.
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      Carte propulsée par Maavnica SmartCard · Prototype en cours d’amélioration
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // Récupérer le slug depuis l'URL (/c/{slug})
+    function getSlugFromPath() {
+      const parts = window.location.pathname.split("/").filter(Boolean);
+      const cIndex = parts.indexOf("c");
+      if (cIndex !== -1 && parts[cIndex + 1]) {
+        return decodeURIComponent(parts[cIndex + 1]);
+      }
+      return null;
+    }
+
+    function showToast(message, isError = false) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.toggle("error", isError);
+      toast.classList.add("show");
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 2600);
+    }
+
+    function guessEmoji(card) {
+      const text = ((card.company_name || card.slug || "") + "").toLowerCase();
+      if (text.includes("plomb")) return "🔧";
+      if (text.includes("électric") || text.includes("electric")) return "⚡";
+      if (text.includes("chauff") || text.includes("clim")) return "🔥";
+      if (text.includes("taxi") || text.includes("vtc")) return "🚕";
+      if (text.includes("coiff") || text.includes("hair")) return "✂️";
+      if (text.includes("jardin") || text.includes("paysag")) return "🌿";
+      if (text.includes("nettoy") || text.includes("ménage") || text.includes("clean")) return "🧹";
+      if (text.includes("concierg")) return "🛎️";
+      if (text.includes("immo") || text.includes("agence")) return "🏡";
+      return "🛠️";
+    }
+
+    function applyThemeColor(hex) {
+      if (!hex || !/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(hex)) return;
+      document.documentElement.style.setProperty("--primary", hex);
+      document.documentElement.style.setProperty("--primary-soft", hex);
+    }
+
+    async function loadCard() {
+      const slug = getSlugFromPath();
+      if (!slug) {
+        showToast("Slug introuvable dans l’URL", true);
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/public/cards/${encodeURIComponent(slug)}`);
+        if (!res.ok) {
+          showToast("Carte introuvable", true);
+          return;
+        }
+        const card = await res.json();
+
+        // Thème couleur
+        if (card.theme_color) {
+          applyThemeColor(card.theme_color);
+        }
+
+        // Titre + emoji
+        document.getElementById("company-name").textContent = card.company_name || "Votre entreprise";
+        document.getElementById("hero-emoji").textContent = guessEmoji(card);
+
+        // Sous-titre : construit en fonction des données
+        const subtitleEl = document.getElementById("hero-subtitle");
+        let subtitle = "Votre carte pro intelligente Maavnica.";
+        if (card.phone || card.whatsapp) {
+          subtitle = "Contact, avis Google et demandes de devis en un seul lien.";
+        }
+        subtitleEl.textContent = subtitle;
+
+        // Bouton avis Google
+        const btnGoogle = document.getElementById("btn-google");
+        if (card.google_review_link) {
+          btnGoogle.disabled = false;
+          btnGoogle.onclick = () => {
+            window.open(card.google_review_link, "_blank");
+          };
+        }
+
+        // WhatsApp
+        const btnWhatsApp = document.getElementById("btn-whatsapp");
+        if (card.whatsapp) {
+          btnWhatsApp.disabled = false;
+          const msg = encodeURIComponent(`Bonjour, je vous contacte via votre carte Maavnica SmartCard.`);
+          btnWhatsApp.onclick = () => {
+            window.open(`https://wa.me/${card.whatsapp}?text=${msg}`, "_blank");
+          };
+        }
+
+        // Appel
+        const btnCall = document.getElementById("btn-call");
+        if (card.phone) {
+          btnCall.disabled = false;
+          btnCall.onclick = () => {
+            window.location.href = `tel:${card.phone}`;
+          };
+        }
+
+        // Paiement
+        const btnPay = document.getElementById("btn-pay");
+        if (card.payment_link) {
+          btnPay.disabled = false;
+          btnPay.onclick = () => {
+            window.open(card.payment_link, "_blank");
+          };
+        }
+
+        // Gestion Avis rapide : activer le bouton uniquement si une option est choisie
+        let satisfaction = null;
+        const pillYes = document.getElementById("pill-yes");
+        const pillNo = document.getElementById("pill-no");
+        const btnFeedback = document.getElementById("btn-send-feedback");
+
+        function updateFeedbackState() {
+          btnFeedback.disabled = satisfaction === null;
+        }
+
+        pillYes.addEventListener("click", () => {
+          satisfaction = true;
+          pillYes.classList.add("active-yes");
+          pillNo.classList.remove("active-no");
+          updateFeedbackState();
+        });
+
+        pillNo.addEventListener("click", () => {
+          satisfaction = false;
+          pillNo.classList.add("active-no");
+          pillYes.classList.remove("active-yes");
+          updateFeedbackState();
+        });
+
+        btnFeedback.addEventListener("click", async () => {
+          if (satisfaction === null) return;
+          const comment = document.getElementById("feedback-comment").value.trim();
+          btnFeedback.disabled = true;
+          btnFeedback.textContent = "Envoi en cours…";
+          try {
+            const resp = await fetch(`/api/public/cards/${encodeURIComponent(slug)}/feedback`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ satisfaction, comment: comment || null })
+            });
+            if (!resp.ok) throw new Error();
+            showToast("Merci pour votre retour !");
+            document.getElementById("feedback-comment").value = "";
+            satisfaction = null;
+            pillYes.classList.remove("active-yes");
+            pillNo.classList.remove("active-no");
+          } catch {
+            showToast("Erreur lors de l’envoi du retour.", true);
+          } finally {
+            btnFeedback.textContent = "Envoyer mon retour";
+            btnFeedback.disabled = false;
+          }
+        });
+
+        // Demande de devis
+        const btnQuote = document.getElementById("btn-send-quote");
+        btnQuote.addEventListener("click", async () => {
+          const name = document.getElementById("quote-name").value.trim();
+          const phone = document.getElementById("quote-phone").value.trim();
+          const email = document.getElementById("quote-email").value.trim();
+          const message = document.getElementById("quote-message").value.trim();
+
+          if (!name || !phone || !message) {
+            showToast("Merci de remplir les champs obligatoires.", true);
+            return;
+          }
+
+          btnQuote.disabled = true;
+          btnQuote.textContent = "Envoi en cours…";
+
+          try {
+            const resp = await fetch(`/api/public/cards/${encodeURIComponent(slug)}/quote`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                name,
+                phone,
+                email: email || null,
+                message
+              })
+            });
+            if (!resp.ok) throw new Error();
+            showToast("Demande de devis envoyée !");
+            document.getElementById("quote-name").value = "";
+            document.getElementById("quote-phone").value = "";
+            document.getElementById("quote-email").value = "";
+            document.getElementById("quote-message").value = "";
+          } catch {
+            showToast("Erreur lors de l’envoi du devis.", true);
+          } finally {
+            btnQuote.disabled = false;
+            btnQuote.textContent = "Envoyer ma demande de devis";
+          }
+        });
+
+      } catch (e) {
+        console.error(e);
+        showToast("Erreur lors du chargement de la carte.", true);
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", loadCard);
+  </script>
+</body>
+</html>
+
+
+

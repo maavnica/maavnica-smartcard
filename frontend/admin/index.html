@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Maavnica SmartCard – Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #F3F4F6;
+      margin: 0;
+      padding: 0;
+    }
+
+    .page {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .logo {
+      font-weight: 800;
+      letter-spacing: .15em;
+      font-size: 11px;
+      text-transform: uppercase;
+      color: #2563EB;
+    }
+
+    .pill {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      border: 1px solid #E5E7EB;
+      color: #6B7280;
+      background: white;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1.3fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06);
+      margin-bottom: 16px;
+    }
+
+    .card-header {
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-size: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-subtitle {
+      font-size: 12px;
+      color: #6B7280;
+      margin-bottom: 10px;
+    }
+
+    .field-group {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    @media (max-width: 640px) {
+      .field-group {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    label {
+      font-size: 12px;
+      color: #4B5563;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid #D1D5DB;
+      font-size: 13px;
+      box-sizing: border-box;
+      background: #F9FAFB;
+    }
+
+    input[type="color"] {
+      padding: 0;
+      height: 32px;
+      cursor: pointer;
+    }
+
+    textarea {
+      min-height: 60px;
+    }
+
+    .btn-primary {
+      padding: 9px 14px;
+      border-radius: 999px;
+      border: none;
+      background: #2563EB;
+      color: white;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(37,99,235,.35);
+    }
+
+    .btn-secondary {
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid #D1D5DB;
+      background: white;
+      color: #374151;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 640px) {
+      .stats-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .stat-card {
+      background: #F9FAFB;
+      border-radius: 12px;
+      padding: 10px 12px;
+      border: 1px solid #E5E7EB;
+      font-size: 13px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: #6B7280;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .stat-extra {
+      font-size: 11px;
+      color: #6B7280;
+      margin-top: 2px;
+    }
+
+    .list-item {
+      border-bottom: 1px solid #E5E7EB;
+      padding: 8px 0;
+      font-size: 13px;
+    }
+
+    .list-item:last-child {
+      border-bottom: none;
+    }
+
+    .list-title {
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+
+    .list-meta {
+      font-size: 11px;
+      color: #6B7280;
+      margin-bottom: 2px;
+    }
+
+    .qr-wrapper {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .qr-wrapper img {
+      max-width: 160px;
+      border-radius: 14px;
+      border: 8px solid #F3F4F6;
+      box-shadow: 0 10px 30px rgba(15,23,42,0.25);
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="topbar">
+      <div class="logo">MAAVNICA SMARTCARD – ADMIN</div>
+      <div class="pill">Prototype interne · 2025</div>
+    </div>
+
+    <div class="grid">
+      <!-- COLONNE GAUCHE : CONFIG CARTE + STATS -->
+      <div>
+        <div class="card">
+          <div class="card-header">
+            <span>Configuration de la SmartCard</span>
+          </div>
+          <div class="card-subtitle">
+            Créez une nouvelle carte ou modifiez-en une existante. Utilisez le slug pour charger une carte déjà créée.
+          </div>
+
+          <div style="margin-bottom: 8px;">
+            <label>Charger une carte existante via son slug</label>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <input id="load-slug" placeholder="ex. plomberie-martin" style="flex:1; max-width:260px;" />
+              <button class="btn-secondary" id="btn-load">Charger ma carte</button>
+            </div>
+          </div>
+
+          <hr style="border:none; border-top:1px solid #E5E7EB; margin:12px 0;" />
+
+          <div class="field-group">
+            <div>
+              <label>Nom de l’entreprise</label>
+              <input id="company_name" placeholder="Plomberie Martin, Électricien Dupond..." />
+            </div>
+            <div>
+              <label>Slug (pour l’URL publique)</label>
+              <input id="slug" placeholder="plomberie-martin" />
+            </div>
+          </div>
+
+          <div class="field-group" style="margin-top:8px;">
+            <div>
+              <label>Lien avis Google</label>
+              <input id="google_review_link" placeholder="https://..." />
+            </div>
+            <div>
+              <label>Couleur principale</label>
+              <input id="theme_color" type="color" value="#2563EB" />
+            </div>
+          </div>
+
+          <div class="field-group" style="margin-top:8px;">
+            <div>
+              <label>Téléphone</label>
+              <input id="phone" placeholder="0600000000" />
+            </div>
+            <div>
+              <label>WhatsApp (ex. 33600000000)</label>
+              <input id="whatsapp" placeholder="33600000000" />
+            </div>
+          </div>
+
+          <div class="field-group" style="margin-top:8px;">
+            <div>
+              <label>Lien de paiement (facultatif)</label>
+              <input id="payment_link" placeholder="https://..." />
+            </div>
+            <div>
+              <label>Instagram (facultatif)</label>
+              <input id="instagram" placeholder="https://instagram.com/..." />
+            </div>
+          </div>
+
+          <div class="field-group" style="margin-top:8px;">
+            <div>
+              <label>Facebook (facultatif)</label>
+              <input id="facebook" placeholder="https://facebook.com/..." />
+            </div>
+            <div>
+              <label>TikTok (facultatif)</label>
+              <input id="tiktok" placeholder="https://tiktok.com/@..." />
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-primary" id="btn-save">Enregistrer ma carte</button>
+            <button class="btn-secondary" type="button" onclick="openPublicCard()">Voir la carte publique</button>
+          </div>
+
+          <div class="stats-row" style="margin-top:16px;">
+            <div class="stat-card">
+              <div class="stat-label">Avis collectés</div>
+              <div class="stat-value" id="stat-feedback-count">–</div>
+              <div class="stat-extra">Nombre total de retours rapides</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Satisfaction</div>
+              <div class="stat-value" id="stat-satisfaction-rate">–</div>
+              <div class="stat-extra">Part de clients satisfaits</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Demandes de devis</div>
+              <div class="stat-value" id="stat-quotes-count">–</div>
+              <div class="stat-extra">Demandes reçues via la SmartCard</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span>QR Code de la carte</span>
+          </div>
+          <div class="card-subtitle">
+            Ce QR code pointe vers la version publique de votre SmartCard. Vous pouvez l’imprimer ou l’intégrer sur vos supports.
+          </div>
+          <div class="qr-wrapper">
+            <img id="qr-image" src="" alt="QR code SmartCard" style="display:none;" />
+          </div>
+        </div>
+      </div>
+
+      <!-- COLONNE DROITE : AVIS & DEVIS -->
+      <div>
+        <div class="card">
+          <div class="card-header">
+            <span>Avis & retours rapides</span>
+          </div>
+          <div class="card-subtitle">
+            Les retours envoyés depuis la carte (satisfait / pas satisfait + commentaire).
+          </div>
+          <div id="feedback-list">
+            <div style="font-size:13px; color:#9CA3AF;">Aucun retour pour le moment.</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span>Demandes de devis</span>
+          </div>
+          <div class="card-subtitle">
+            Les demandes envoyées depuis la SmartCard (nom, contact, besoin).
+          </div>
+          <div id="quotes-list">
+            <div style="font-size:13px; color:#9CA3AF;">Aucune demande pour le moment.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentCardId = null;
+    let currentSlug = null;
+
+    function openPublicCard() {
+      const slugInput = document.getElementById("slug").value.trim();
+      if (!slugInput) {
+        alert("Merci de renseigner un slug avant d’ouvrir la carte publique.");
+        return;
+      }
+      window.open("/c/" + slugInput, "_blank");
+    }
+
+    async function loadCardBySlug(slug) {
+      if (!slug) return;
+      try {
+        const res = await fetch(`/api/cards/by-slug/${encodeURIComponent(slug)}`);
+        if (!res.ok) {
+          alert("Aucune carte trouvée pour ce slug.");
+          return;
+        }
+        const data = await res.json();
+        currentCardId = data.id;
+        currentSlug = data.slug;
+
+        document.getElementById("company_name").value = data.company_name || "";
+        document.getElementById("slug").value = data.slug || "";
+        document.getElementById("google_review_link").value = data.google_review_link || "";
+        document.getElementById("phone").value = data.phone || "";
+        document.getElementById("whatsapp").value = data.whatsapp || "";
+        document.getElementById("payment_link").value = data.payment_link || "";
+        document.getElementById("instagram").value = data.instagram || "";
+        document.getElementById("facebook").value = data.facebook || "";
+        document.getElementById("tiktok").value = data.tiktok || "";
+        if (data.theme_color) {
+          document.getElementById("theme_color").value = data.theme_color;
+        }
+
+        // QR
+        const qrImg = document.getElementById("qr-image");
+        if (data.qr_url) {
+          qrImg.src = data.qr_url;
+          qrImg.style.display = "inline-block";
+        } else {
+          qrImg.style.display = "none";
+        }
+
+        // Charger avis + devis + stats
+        await Promise.all([
+          loadFeedback(data.id),
+          loadQuotes(data.id),
+        ]);
+      } catch (e) {
+        console.error(e);
+        alert("Erreur lors du chargement de la carte.");
+      }
+    }
+
+    async function loadFeedback(cardId) {
+      const feedbackContainer = document.getElementById("feedback-list");
+      feedbackContainer.innerHTML = '<div style="font-size:13px; color:#9CA3AF;">Chargement…</div>';
+
+      try {
+        const res = await fetch(`/api/cards/${cardId}/feedback`);
+        if (!res.ok) {
+          feedbackContainer.innerHTML = '<div style="font-size:13px; color:#9CA3AF;">Erreur de chargement.</div>';
+          return;
+        }
+        const items = await res.json();
+
+        if (!items.length) {
+          feedbackContainer.innerHTML = '<div style="font-size:13px; color:#9CA3AF;">Aucun retour pour le moment.</div>';
+        } else {
+          feedbackContainer.innerHTML = "";
+          let positive = 0;
+          items.forEach(fb => {
+            if (fb.satisfaction) positive += 1;
+            const div = document.createElement("div");
+            div.className = "list-item";
+            div.innerHTML = `
+              <div class="list-title">${fb.satisfaction ? "🙂 Satisfait" : "🙁 Pas satisfait"}</div>
+              <div class="list-meta">${fb.created_at || ""}</div>
+              <div>${fb.comment || "<i>Aucun commentaire</i>"}</div>
+            `;
+            feedbackContainer.appendChild(div);
+          });
+
+          // Stats globales
+          const total = items.length;
+          const rate = total ? Math.round((positive / total) * 100) : 0;
+          document.getElementById("stat-feedback-count").textContent = total;
+          document.getElementById("stat-satisfaction-rate").textContent = total ? rate + " %" : "–";
+        }
+      } catch (e) {
+        console.error(e);
+        feedbackContainer.innerHTML = '<div style="font-size:13px; color:#9CA3AF;">Erreur de chargement.</div>';
+      }
+    }
+
+    async function loadQuotes(cardId) {
+      const quotesContainer = document.getElementById("quotes-list");
+      quotesContainer.innerHTML = '<div style="font-size:13px; color:#9CA3AF;">Chargement…</div>';
+
+      try {
+        const res = await fetch(`/api/cards/${cardId}/quotes`);
+        if (!res.ok) {
+          quotesContainer.innerHTML = '<div style="font-size:13px; color:#9CA3AF;">Erreur de chargement.</div>';
+          return;
+        }
+        const items = await res.json();
+
+        if (!items.length) {
+          quotesContainer.innerHTML = '<div style="font-size:13px; color:#9CA3AF;">Aucune demande pour le moment.</div>';
+        } else {
+          quotesContainer.innerHTML = "";
+          items.forEach(q => {
+            const div = document.createElement("div");
+            div.className = "list-item";
+            div.innerHTML = `
+              <div class="list-title">${q.name || "Sans nom"}</div>
+              <div class="list-meta">
+                ${q.phone || ""}${q.phone && q.email ? " · " : ""}${q.email || ""}${q.created_at ? " · " + q.created_at : ""}
+              </div>
+              <div>${q.message || "<i>Aucun détail fourni</i>"}</div>
+            `;
+            quotesContainer.appendChild(div);
+          });
+
+          // Stat
+          document.getElementById("stat-quotes-count").textContent = items.length;
+        }
+      } catch (e) {
+        console.error(e);
+        quotesContainer.innerHTML = '<div style="font-size:13px; color:#9CA3AF;">Erreur de chargement.</div>';
+      }
+    }
+
+    async function saveCard() {
+      const payload = {
+        company_name: document.getElementById("company_name").value.trim(),
+        slug: document.getElementById("slug").value.trim(),
+        google_review_link: document.getElementById("google_review_link").value.trim() || null,
+        phone: document.getElementById("phone").value.trim() || null,
+        whatsapp: document.getElementById("whatsapp").value.trim() || null,
+        payment_link: document.getElementById("payment_link").value.trim() || null,
+        instagram: document.getElementById("instagram").value.trim() || null,
+        facebook: document.getElementById("facebook").value.trim() || null,
+        tiktok: document.getElementById("tiktok").value.trim() || null,
+        theme_color: document.getElementById("theme_color").value
+      };
+
+      if (!payload.company_name || !payload.slug) {
+        alert("Merci de renseigner au minimum le nom de l’entreprise et le slug.");
+        return;
+      }
+
+      try {
+        let res;
+        if (currentCardId) {
+          res = await fetch(`/api/cards/${currentCardId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+        } else {
+          res = await fetch("/api/cards/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+        }
+
+        if (!res.ok) {
+          alert("Erreur lors de l’enregistrement.");
+          return;
+        }
+
+        const data = await res.json();
+        currentCardId = data.id;
+        currentSlug = data.slug;
+        document.getElementById("load-slug").value = data.slug;
+        alert("Carte enregistrée ✅");
+        // Recharger avis/devis/stats si la carte existait déjà
+        await Promise.all([loadFeedback(data.id), loadQuotes(data.id)]);
+      } catch (e) {
+        console.error(e);
+        alert("Erreur réseau lors de l’enregistrement.");
+      }
+    }
+
+    document.getElementById("btn-load").addEventListener("click", () => {
+      const slug = document.getElementById("load-slug").value.trim();
+      if (!slug) {
+        alert("Merci de saisir un slug à charger.");
+        return;
+      }
+      loadCardBySlug(slug);
+    });
+
+    document.getElementById("btn-save").addEventListener("click", saveCard);
+  </script>
+</body>
+</html>
+
